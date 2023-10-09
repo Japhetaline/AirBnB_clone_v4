@@ -1,9 +1,10 @@
 $(document).ready(() => {
+  const allChecked = {};
   const callback = function () {
     $.ajax({
       method: 'POST',
       url: 'http://0.0.0.0:5001/api/v1/places_search/',
-      data: $('.amenities li input[type=checkbox]:checked'),
+      data: allChecked,
       dataType: 'json',
       headers: { 'Content-Type': 'application/json' },
       success: function (response) {
@@ -14,5 +15,13 @@ $(document).ready(() => {
       }
     });
   };
+  $('li input[type=checkbox]').change(function () {
+    if (this.checked) {
+      allChecked[this.dataset.name] = this.dataset.id;
+    } else {
+      delete allChecked[this.dataset.name];
+    }
+    $('div.locations h4').text(Object.keys(allChecked).sort().join(', '));
+  });
   $('button').on('click', callback);
 });
